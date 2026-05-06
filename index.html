@@ -7,7 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f0f2f5; }
-        .container { max-width: 700px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .container { max-width: 750px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         h2 { text-align: center; color: #333; margin-bottom: 20px; }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
@@ -29,11 +29,14 @@
 <body>
 
 <div class="container">
-    <h2>INPUT NILAI KELAS VI MI BATULAWANG</h2>
+    <h2>INPUT NILAI KELAS 6 MI BATULAWANG</h2>
     
     <div class="form-group">
-        <label>Nama Siswa:</label>
-        <input type="text" id="namaSiswa" placeholder="Masukkan nama lengkap">
+        <label>Pilih Siswa:</label>
+        <select id="namaSiswa">
+            <option value="">-- Pilih Nama Siswa --</option>
+            <!-- Daftar nama siswa bisa ditambah di sini -->
+        </select>
     </div>
 
     <div class="form-group">
@@ -57,12 +60,12 @@
 
     <div class="form-group">
         <label>Nilai:</label>
-        <input type="number" id="nilai" placeholder="0 - 100">
+        <input type="number" id="nilai" placeholder="Contoh: 85" min="0" max="100">
     </div>
 
     <div class="button-group">
-        <button class="btn-save" onclick="tambahData()">Simpan Data</button>
-        <button class="btn-export" onclick="exportKeExcel()">Export ke Excel</button>
+        <button class="btn-save" onclick="tambahData()">Simpan ke Tabel</button>
+        <button class="btn-export" onclick="exportKeExcel()">Export ke Excel (.xlsx)</button>
     </div>
 
     <table id="tabelNilai">
@@ -74,19 +77,46 @@
             </tr>
         </thead>
         <tbody>
-            </tbody>
+            <!-- Data akan masuk ke sini -->
+        </tbody>
     </table>
 </div>
 
 <script>
-    // Fungsi untuk menambah baris ke tabel
+    // DAFTAR NAMA SISWA (Silakan edit/tambah sesuai kebutuhan)
+    const listSiswa = [
+        "AHZA DANIS HIKMAT",
+        "ANANDA RIZKY NUR WAHID",
+        "ANJAR MAULANA",
+        "CAHAYA ANUGRAH PURNAMA SEGARA",
+        "CHELSEA ALISHA",
+        "FAKIH AL HANIF",
+        "GIFAREL ALRIZKI",
+        "GILANG RAMADHAN PERMANA",
+        "MUHAMMAD IMAM AMINUDIN",
+		"MUHAMMAD KIOSASIH",
+		"RAUFA MUHAMAD ALGHIFARY",
+        "SRI SULISTIANI"
+    ];
+
+    // Fungsi untuk memuat daftar nama ke dropdown saat halaman dibuka
+    window.onload = function() {
+        const select = document.getElementById("namaSiswa");
+        listSiswa.sort().forEach(nama => {
+            let option = document.createElement("option");
+            option.value = nama;
+            option.text = nama;
+            select.appendChild(option);
+        });
+    };
+
     function tambahData() {
         const nama = document.getElementById("namaSiswa").value;
         const mapel = document.getElementById("mapel").value;
         const nilai = document.getElementById("nilai").value;
 
         if (nama === "" || nilai === "") {
-            alert("Harap isi Nama dan Nilai!");
+            alert("Harap pilih nama siswa dan isi nilai!");
             return;
         }
 
@@ -97,25 +127,17 @@
         row.insertCell(1).innerHTML = mapel;
         row.insertCell(2).innerHTML = nilai;
 
-        // Bersihkan input setelah simpan
-        document.getElementById("namaSiswa").value = "";
+        // Reset nilai input setelah simpan
         document.getElementById("nilai").value = "";
     }
 
-    // Fungsi utama untuk Export ke Excel
     function exportKeExcel() {
         const tabel = document.getElementById("tabelNilai");
-        
-        // Memeriksa apakah ada data di tabel (selain header)
         if (tabel.rows.length <= 1) {
-            alert("Belum ada data untuk diexport!");
+            alert("Belum ada data di tabel!");
             return;
         }
-
-        /* Mengonversi tabel HTML menjadi worksheet */
-        const wb = XLSX.utils.table_to_book(tabel, { sheet: "Daftar Nilai" });
-
-        /* Menghasilkan file Excel dan mengunduhnya */
+        const wb = XLSX.utils.table_to_book(tabel, { sheet: "Nilai Kelas 6" });
         XLSX.writeFile(wb, "Data_Nilai_Kelas6.xlsx");
     }
 </script>
