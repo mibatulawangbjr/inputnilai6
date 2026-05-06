@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Nilai Kelas 6</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f0f2f5; }
+        .container { max-width: 700px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #333; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        
+        .button-group { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-save { flex: 2; padding: 12px; background-color: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .btn-export { flex: 1; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        
+        .btn-save:hover { background-color: #218838; }
+        .btn-export:hover { background-color: #0069d9; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 25px; }
+        th, td { border: 1px solid #dee2e6; padding: 12px; text-align: left; }
+        th { background-color: #e9ecef; color: #495057; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>INPUT NILAI KELAS VI MI BATULAWANG</h2>
+    
+    <div class="form-group">
+        <label>Nama Siswa:</label>
+        <input type="text" id="namaSiswa" placeholder="Masukkan nama lengkap">
+    </div>
+
+    <div class="form-group">
+        <label>Mata Pelajaran:</label>
+        <select id="mapel">
+            <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+            <option value="Al Qur`an Hadits">Al Qur`an Hadits</option>
+            <option value="Matematika">Matematika</option>
+            <option value="Akidah Akhlak">Akidah Akhlak</option>
+            <option value="IPAS">IPAS</option>
+			<option value="Fikih">Fikih</option>
+			<option value="PKn">PKn</option>
+			<option value="SKI">SKI</option>
+			<option value="Bahasa Arab">Bahasa Arab</option>
+			<option value="Bahasa Sunda">Bahasa Sunda</option>
+			<option value="Seni Budaya">Seni Budaya</option>
+			<option value="Bahasa Inggris">Bahasa Inggris</option>
+			<option value="PJOK">PJOK</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Nilai:</label>
+        <input type="number" id="nilai" placeholder="0 - 100">
+    </div>
+
+    <div class="button-group">
+        <button class="btn-save" onclick="tambahData()">Simpan Data</button>
+        <button class="btn-export" onclick="exportKeExcel()">Export ke Excel</button>
+    </div>
+
+    <table id="tabelNilai">
+        <thead>
+            <tr>
+                <th>Nama Siswa</th>
+                <th>Mata Pelajaran</th>
+                <th>Nilai</th>
+            </tr>
+        </thead>
+        <tbody>
+            </tbody>
+    </table>
+</div>
+
+<script>
+    // Fungsi untuk menambah baris ke tabel
+    function tambahData() {
+        const nama = document.getElementById("namaSiswa").value;
+        const mapel = document.getElementById("mapel").value;
+        const nilai = document.getElementById("nilai").value;
+
+        if (nama === "" || nilai === "") {
+            alert("Harap isi Nama dan Nilai!");
+            return;
+        }
+
+        const table = document.getElementById("tabelNilai").getElementsByTagName('tbody')[0];
+        const row = table.insertRow();
+        
+        row.insertCell(0).innerHTML = nama;
+        row.insertCell(1).innerHTML = mapel;
+        row.insertCell(2).innerHTML = nilai;
+
+        // Bersihkan input setelah simpan
+        document.getElementById("namaSiswa").value = "";
+        document.getElementById("nilai").value = "";
+    }
+
+    // Fungsi utama untuk Export ke Excel
+    function exportKeExcel() {
+        const tabel = document.getElementById("tabelNilai");
+        
+        // Memeriksa apakah ada data di tabel (selain header)
+        if (tabel.rows.length <= 1) {
+            alert("Belum ada data untuk diexport!");
+            return;
+        }
+
+        /* Mengonversi tabel HTML menjadi worksheet */
+        const wb = XLSX.utils.table_to_book(tabel, { sheet: "Daftar Nilai" });
+
+        /* Menghasilkan file Excel dan mengunduhnya */
+        XLSX.writeFile(wb, "Data_Nilai_Kelas6.xlsx");
+    }
+</script>
+
+</body>
+</html>
