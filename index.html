@@ -14,20 +14,19 @@
         label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
         input, select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
         
-        .button-group { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 15px; }
-        button { padding: 12px; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; }
+        .button-group { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-save { flex: 2; padding: 12px; background-color: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .btn-export { flex: 1; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; }
         
-        .btn-save { background-color: #28a745; }
-        .btn-export { background-color: #007bff; }
-        .btn-email { background-color: #dc3545; } /* Merah untuk Kirim Email */
-        
-        button:hover { opacity: 0.9; }
+        .btn-save:hover { background-color: #218838; }
+        .btn-export:hover { background-color: #0069d9; }
 
         .table-container { margin-top: 30px; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; }
         th, td { border: 1px solid #dee2e6; padding: 12px; text-align: left; }
         th { background-color: #e9ecef; color: #495057; }
         tr:nth-child(even) { background-color: #f8f9fa; }
+        tr:hover { background-color: #f1f1f1; }
     </style>
 </head>
 <body>
@@ -64,13 +63,12 @@
 
     <div class="form-group">
         <label>Nilai Akhir:</label>
-        <input type="number" id="nilai" placeholder="Masukkan angka 0-100">
+        <input type="number" id="nilai" placeholder="Masukkan angka 0-100" min="0" max="100">
     </div>
 
     <div class="button-group">
-        <button class="btn-save" onclick="tambahData()">Simpan Data</button>
-        <button class="btn-export" onclick="exportKeExcel()">Excel</button>
-        <button class="btn-email" onclick="kirimKeEmail()">Kirim ke Email</button>
+        <button class="btn-save" onclick="tambahData()">Simpan ke Tabel</button>
+        <button class="btn-export" onclick="exportKeExcel()">Download Excel (.xlsx)</button>
     </div>
 
     <div class="table-container">
@@ -79,22 +77,34 @@
                 <tr>
                     <th>Nama Siswa</th>
                     <th>Mata Pelajaran</th>
-                    <th>Nilai</th>
+                    <th style="width: 100px;">Nilai</th>
                 </tr>
             </thead>
-            <tbody></tbody>
+            <tbody>
+                <!-- Baris data otomatis bertambah di sini -->
+            </tbody>
         </table>
     </div>
 </div>
 
 <script>
+    // DATA SISWA MI BATULAWANG
     const listSiswa = [
-        "AHZA DANIS HIKMAT", "ANANDA RIZKY NUR WAHID", "ANJAR MAULANA",
-        "CAHAYA ANUGRAH PURNAMA SEGARA", "CHELSEA ALISHA", "FAKIH AL HANIF",
-        "GIFAREL ALRIZKI", "GILANG RAMADHAN PERMANA", "MUHAMMAD IMAM AMINUDIN",
-        "MUHAMMAD KIOSASIH", "RAUFA MUHAMAD ALGHIFARY", "SRI SULISTIANI"
+        "AHZA DANIS HIKMAT",
+        "ANANDA RIZKY NUR WAHID",
+        "ANJAR MAULANA",
+        "CAHAYA ANUGRAH PURNAMA SEGARA",
+        "CHELSEA ALISHA",
+        "FAKIH AL HANIF",
+        "GIFAREL ALRIZKI",
+        "GILANG RAMADHAN PERMANA",
+        "MUHAMMAD IMAM AMINUDIN",
+        "MUHAMMAD KIOSASIH",
+        "RAUFA MUHAMAD ALGHIFARY",
+        "SRI SULISTIANI"
     ];
 
+    // Load nama siswa ke dropdown saat halaman dimuat
     window.onload = function() {
         const select = document.getElementById("namaSiswa");
         listSiswa.sort().forEach(nama => {
@@ -111,54 +121,34 @@
         const nilai = document.getElementById("nilai").value;
 
         if (nama === "" || nilai === "") {
-            alert("Isi Nama dan Nilai!");
+            alert("Maaf, Nama Siswa dan Nilai harus diisi.");
             return;
         }
 
         const table = document.getElementById("tabelNilai").getElementsByTagName('tbody')[0];
         const row = table.insertRow();
-        row.insertCell(0).innerHTML = nama;
+        
+        row.insertCell(0).innerHTML = `<strong>${nama}</strong>`;
         row.insertCell(1).innerHTML = mapel;
         row.insertCell(2).innerHTML = nilai;
 
+        // Reset input nilai dan fokus kembali ke pemilihan nama agar cepat
         document.getElementById("nilai").value = "";
+        document.getElementById("namaSiswa").focus();
     }
 
     function exportKeExcel() {
         const tabel = document.getElementById("tabelNilai");
-        if (tabel.rows.length <= 1) { alert("Data kosong!"); return; }
-        const wb = XLSX.utils.table_to_book(tabel, { sheet: "Nilai" });
-        XLSX.writeFile(wb, "Nilai_MI_Batulawang.xlsx");
-    }
-
-    function kirimKeEmail() {
-        const tabel = document.getElementById("tabelNilai");
         if (tabel.rows.length <= 1) {
-            alert("Belum ada data untuk dikirim!");
+            alert("Tabel masih kosong, tidak ada data untuk diexport.");
             return;
         }
-
-        let kontenEmail = "Laporan Nilai Siswa Kelas 6 - MI Batulawang\n\n";
-        kontenEmail += "------------------------------------------\n";
         
-        // Mengambil data dari tabel untuk dijadikan teks email
-        const rows = tabel.getElementsByTagName('tbody')[0].rows;
-        for (let i = 0; i < rows.length; i++) {
-            const nama = rows[i].cells[0].innerText;
-            const mapel = rows[i].cells[1].innerText;
-            const nilai = rows[i].cells[2].innerText;
-            kontenEmail += `${i+1}. ${nama} | ${mapel} | Nilai: ${nilai}\n`;
-        }
-
-        kontenEmail += "------------------------------------------\n";
-        kontenEmail += "\nDikirim via Sistem Input Nilai MI Batulawang.";
-
-        const subjek = encodeURIComponent("Laporan Nilai Kelas 6 MI Batulawang");
-        const body = encodeURIComponent(kontenEmail);
-        const emailTujuan = "mibatulawang23@gmail.com";
-
-        // Membuka aplikasi email default pengguna
-        window.location.href = `mailto:${emailTujuan}?subject=${subjek}&body=${body}`;
+        // Konversi ke format Excel
+        const wb = XLSX.utils.table_to_book(tabel, { sheet: "Nilai MI Batulawang" });
+        
+        // Nama file menyesuaikan instansi
+        XLSX.writeFile(wb, "Nilai_Kelas6_MIBatulawang.xlsx");
     }
 </script>
 
