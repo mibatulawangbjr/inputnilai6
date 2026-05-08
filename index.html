@@ -3,24 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Input Nilai Kelas 6</title>
+    <title>Input Nilai Kelas 6 - MI Batulawang</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f0f2f5; }
-        .container { max-width: 750px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h2 { text-align: center; color: #333; margin-bottom: 20px; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #333; margin-bottom: 5px; text-transform: uppercase; }
+        p.subtitle { text-align: center; color: #666; margin-bottom: 25px; font-size: 14px; }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
-        input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
         
-        .button-group { display: flex; gap: 10px; margin-top: 15px; }
-        .btn-save { flex: 2; padding: 12px; background-color: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; }
-        .btn-export { flex: 1; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .button-group { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 15px; }
+        button { padding: 12px; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; }
         
-        .btn-save:hover { background-color: #218838; }
-        .btn-export:hover { background-color: #0069d9; }
+        .btn-save { background-color: #28a745; }
+        .btn-export { background-color: #007bff; }
+        .btn-email { background-color: #dc3545; } /* Merah untuk Kirim Email */
+        
+        button:hover { opacity: 0.9; }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 25px; }
+        .table-container { margin-top: 30px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
         th, td { border: 1px solid #dee2e6; padding: 12px; text-align: left; }
         th { background-color: #e9ecef; color: #495057; }
         tr:nth-child(even) { background-color: #f8f9fa; }
@@ -29,13 +33,13 @@
 <body>
 
 <div class="container">
-    <h2>INPUT NILAI KELAS 6 MI BATULAWANG</h2>
+    <h2>Input Nilai Kelas 6</h2>
+    <p class="subtitle">MI BATULAWANG - TAHUN PELAJARAN 2025/2026</p>
     
     <div class="form-group">
-        <label>Pilih Siswa:</label>
+        <label>Pilih Nama Siswa:</label>
         <select id="namaSiswa">
-            <option value="">-- Pilih Nama Siswa --</option>
-            <!-- Daftar nama siswa bisa ditambah di sini -->
+            <option value="">-- Klik untuk mencari nama --</option>
         </select>
     </div>
 
@@ -47,59 +51,50 @@
             <option value="Matematika">Matematika</option>
             <option value="Akidah Akhlak">Akidah Akhlak</option>
             <option value="IPAS">IPAS</option>
-			<option value="Fikih">Fikih</option>
-			<option value="PKn">PKn</option>
-			<option value="SKI">SKI</option>
-			<option value="Bahasa Arab">Bahasa Arab</option>
-			<option value="Bahasa Sunda">Bahasa Sunda</option>
-			<option value="Seni Budaya">Seni Budaya</option>
-			<option value="Bahasa Inggris">Bahasa Inggris</option>
-			<option value="PJOK">PJOK</option>
+            <option value="Fikih">Fikih</option>
+            <option value="PKn">PKn</option>
+            <option value="SKI">SKI</option>
+            <option value="Bahasa Arab">Bahasa Arab</option>
+            <option value="Bahasa Sunda">Bahasa Sunda</option>
+            <option value="Seni Budaya">Seni Budaya</option>
+            <option value="Bahasa Inggris">Bahasa Inggris</option>
+            <option value="PJOK">PJOK</option>
         </select>
     </div>
 
     <div class="form-group">
-        <label>Nilai:</label>
-        <input type="number" id="nilai" placeholder="Contoh: 85" min="0" max="100">
+        <label>Nilai Akhir:</label>
+        <input type="number" id="nilai" placeholder="Masukkan angka 0-100">
     </div>
 
     <div class="button-group">
-        <button class="btn-save" onclick="tambahData()">Simpan ke Tabel</button>
-        <button class="btn-export" onclick="exportKeExcel()">Export ke Excel (.xlsx)</button>
+        <button class="btn-save" onclick="tambahData()">Simpan Data</button>
+        <button class="btn-export" onclick="exportKeExcel()">Excel</button>
+        <button class="btn-email" onclick="kirimKeEmail()">Kirim ke Email</button>
     </div>
 
-    <table id="tabelNilai">
-        <thead>
-            <tr>
-                <th>Nama Siswa</th>
-                <th>Mata Pelajaran</th>
-                <th>Nilai</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Data akan masuk ke sini -->
-        </tbody>
-    </table>
+    <div class="table-container">
+        <table id="tabelNilai">
+            <thead>
+                <tr>
+                    <th>Nama Siswa</th>
+                    <th>Mata Pelajaran</th>
+                    <th>Nilai</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 </div>
 
 <script>
-    // DAFTAR NAMA SISWA (Silakan edit/tambah sesuai kebutuhan)
     const listSiswa = [
-        "AHZA DANIS HIKMAT",
-        "ANANDA RIZKY NUR WAHID",
-        "ANJAR MAULANA",
-        "CAHAYA ANUGRAH PURNAMA SEGARA",
-        "CHELSEA ALISHA",
-        "FAKIH AL HANIF",
-        "GIFAREL ALRIZKI",
-        "GILANG RAMADHAN PERMANA",
-        "MUHAMMAD IMAM AMINUDIN",
-		"MUHAMMAD KIOSASIH",
-		"RAUFA MUHAMAD ALGHIFARY",
-        "SRI SULISTIANI"
+        "AHZA DANIS HIKMAT", "ANANDA RIZKY NUR WAHID", "ANJAR MAULANA",
+        "CAHAYA ANUGRAH PURNAMA SEGARA", "CHELSEA ALISHA", "FAKIH AL HANIF",
+        "GIFAREL ALRIZKI", "GILANG RAMADHAN PERMANA", "MUHAMMAD IMAM AMINUDIN",
+        "MUHAMMAD KIOSASIH", "RAUFA MUHAMAD ALGHIFARY", "SRI SULISTIANI"
     ];
 
-    // Fungsi untuk memuat daftar nama ke dropdown saat halaman dibuka
     window.onload = function() {
         const select = document.getElementById("namaSiswa");
         listSiswa.sort().forEach(nama => {
@@ -116,29 +111,54 @@
         const nilai = document.getElementById("nilai").value;
 
         if (nama === "" || nilai === "") {
-            alert("Harap pilih nama siswa dan isi nilai!");
+            alert("Isi Nama dan Nilai!");
             return;
         }
 
         const table = document.getElementById("tabelNilai").getElementsByTagName('tbody')[0];
         const row = table.insertRow();
-        
         row.insertCell(0).innerHTML = nama;
         row.insertCell(1).innerHTML = mapel;
         row.insertCell(2).innerHTML = nilai;
 
-        // Reset nilai input setelah simpan
         document.getElementById("nilai").value = "";
     }
 
     function exportKeExcel() {
         const tabel = document.getElementById("tabelNilai");
+        if (tabel.rows.length <= 1) { alert("Data kosong!"); return; }
+        const wb = XLSX.utils.table_to_book(tabel, { sheet: "Nilai" });
+        XLSX.writeFile(wb, "Nilai_MI_Batulawang.xlsx");
+    }
+
+    function kirimKeEmail() {
+        const tabel = document.getElementById("tabelNilai");
         if (tabel.rows.length <= 1) {
-            alert("Belum ada data di tabel!");
+            alert("Belum ada data untuk dikirim!");
             return;
         }
-        const wb = XLSX.utils.table_to_book(tabel, { sheet: "Nilai Kelas 6" });
-        XLSX.writeFile(wb, "Data_Nilai_Kelas6.xlsx");
+
+        let kontenEmail = "Laporan Nilai Siswa Kelas 6 - MI Batulawang\n\n";
+        kontenEmail += "------------------------------------------\n";
+        
+        // Mengambil data dari tabel untuk dijadikan teks email
+        const rows = tabel.getElementsByTagName('tbody')[0].rows;
+        for (let i = 0; i < rows.length; i++) {
+            const nama = rows[i].cells[0].innerText;
+            const mapel = rows[i].cells[1].innerText;
+            const nilai = rows[i].cells[2].innerText;
+            kontenEmail += `${i+1}. ${nama} | ${mapel} | Nilai: ${nilai}\n`;
+        }
+
+        kontenEmail += "------------------------------------------\n";
+        kontenEmail += "\nDikirim via Sistem Input Nilai MI Batulawang.";
+
+        const subjek = encodeURIComponent("Laporan Nilai Kelas 6 MI Batulawang");
+        const body = encodeURIComponent(kontenEmail);
+        const emailTujuan = "mibatulawang23@gmail.com";
+
+        // Membuka aplikasi email default pengguna
+        window.location.href = `mailto:${emailTujuan}?subject=${subjek}&body=${body}`;
     }
 </script>
 
